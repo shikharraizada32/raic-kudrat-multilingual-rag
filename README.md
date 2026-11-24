@@ -1,14 +1,14 @@
 # Kudrat Foundation — Multilingual SCI Knowledge Companion (Data Ingestion & RAG Chunking Pipeline)
 
-**Responsible AI Consortium (RAIC) — Team 03 | Partner: Kudrat Foundation, India**[cite: 1, 2]
+**Responsible AI Consortium (RAIC) — Team 03 | Partner: Kudrat Foundation, India**
 
-This repository contains the **Document Preparation, Data Cleaning, and Structure-Based Chunking Pipeline** for the **AI Knowledge Companion for People with Spinal Cord Injury (SCI)**[cite: 2, 3]. It transforms curated, authoritative Indian and international SCI resources (in English and Hindi) into validated, metadata-rich Markdown chunks ready for multilingual embedding and Retrieval-Augmented Generation (RAG)[cite: 2, 3].
+This repository contains the **Document Preparation, Data Cleaning, and Structure-Based Chunking Pipeline** for the **AI Knowledge Companion for People with Spinal Cord Injury (SCI)**. It transforms curated, authoritative Indian and international SCI resources (in English and Hindi) into validated, metadata-rich Markdown chunks ready for multilingual embedding and Retrieval-Augmented Generation (RAG).
 
 ---
 
 ## 1. Architecture Alignment
 
-This pipeline implements the **Document Preparation** stage of our multilingual RAG architecture[cite: 3]:
+This pipeline implements the **Document Preparation** stage of our multilingual RAG architecture:
 
 ```text
 Curated Web & PDF Sources (EN / HI)
@@ -17,7 +17,7 @@ Curated Web & PDF Sources (EN / HI)
 Async Scraper (Crawl4AI) & PDF Extractor (PyMuPDF4LLM)
         │
         ▼
-Devanagari Unicode Validation + Boilerplate & Helpline Sanitization
+Devanagari Unicode Validation + Boilerplate & Helpline Sanitisation
         │
         ▼
 Structure-Based Markdown Chunking (H1 / H2 / H3 Hierarchy Preserved)
@@ -32,39 +32,39 @@ Structure-Based Markdown Chunking (H1 / H2 / H3 Hierarchy Preserved)
 
 ## 2. Knowledge Base Coverage (5 Core Domains)
 
-All sources in `seed_sources.json` are mapped to the five support pillars defined in the Kudrat Foundation project brief[cite: 2]:
+All sources in `seed_sources.json` are mapped to the five support pillars defined in the Kudrat Foundation project brief:
 
 1. **Government Schemes & Legal Rights (`government_schemes`):**
-   * Department of Empowerment of Persons with Disabilities (DEPwD) — ADIP Scheme overview & official revised guidelines PDF[cite: 2].
-   * ARJUN Portal (DEPwD) — ADIP, RVY, and UDID FAQs and Hindi portal guides (`hi`)[cite: 2].
-   * Swavlamban Card Portal — Step-by-step UDID card & disability certificate process[cite: 2].
-   * RPwD Act 2016 & Accessibility Guidelines index, `myScheme.gov.in`, and DEPwD Hindi portal (`hi`)[cite: 2].
+   * Department of Empowerment of Persons with Disabilities (DEPwD) — ADIP Scheme overview & official revised guidelines PDF.
+   * ARJUN Portal (DEPwD) — ADIP, RVY, and UDID FAQs and Hindi portal guides (`hi`).
+   * Swavlamban Card Portal — Step-by-step UDID card & disability certificate process.
+   * RPwD Act 2016 & Accessibility Guidelines index, `myScheme.gov.in`, and DEPwD Hindi portal (`hi`).
 2. **Assistive Solutions & Financial Support (`assistive_solutions`):**
-   * ALIMCO assistive devices & mobility aids catalog[cite: 2].
-   * National Divyangjan Finance and Development Corporation (NDFDC) concessional loans & skilling[cite: 2].
-   * Kudrat Foundation / TrulyAbled initiative[cite: 2].
+   * ALIMCO assistive devices & mobility aids catalog.
+   * National Divyangjan Finance and Development Corporation (NDFDC) concessional loans & skilling.
+   * Kudrat Foundation / TrulyAbled initiative.
 3. **India-Specific Rehabilitation (`rehabilitation`):**
-   * DEPwD Financial Assistance to Spinal Injuries Centers (ASIC Scheme)[cite: 2].
-   * Indian Spinal Injuries Centre (ISIC) physiotherapy & multidisciplinary rehabilitation[cite: 2].
-   * The Spinal Foundation India (life after SCI, 24/7 helpline, Indian rehab directory)[cite: 2].
-   * Nina Foundation & Soulfree (INSPIRE integrated spinal rehabilitation)[cite: 2].
+   * DEPwD Financial Assistance to Spinal Injuries Centers (ASIC Scheme).
+   * Indian Spinal Injuries Centre (ISIC) physiotherapy & multidisciplinary rehabilitation.
+   * The Spinal Foundation India (life after SCI, 24/7 helpline, Indian rehab directory).
+   * Nina Foundation & Soulfree (INSPIRE integrated spinal rehabilitation).
 4. **Healthcare & Clinical Management (`healthcare`):**
-   * World Health Organization (WHO) Spinal Cord Injury Fact Sheet[cite: 2].
-   * MSKTC Complete SCI Factsheet Collection (Autonomic Dysreflexia, Neurogenic Bladder/Bowel, Pressure Injuries, Spasticity, Depression & Adjustment)[cite: 2].
+   * World Health Organization (WHO) Spinal Cord Injury Fact Sheet.
+   * MSKTC Complete SCI Factsheet Collection (Autonomic Dysreflexia, Neurogenic Bladder/Bowel, Pressure Injuries, Spasticity, Depression & Adjustment).
 5. **Everyday Living & Livelihood (`daily_living`):**
-   * Safe wheelchair transfer techniques and post-injury daily management[cite: 2].
-   * EnAble India livelihood, skilling, and employment services for Persons with Disabilities[cite: 2].
+   * Safe wheelchair transfer techniques and post-injury daily management.
+   * EnAble India livelihood, skilling, and employment services for Persons with Disabilities.
 
 ---
 
 ## 3. Key Engineering & Responsible AI Features
 
-* **Structure-Preserving Extraction:** Instead of flat text scraping (which destroys eligibility tables and section context), `Crawl4AI` and `PyMuPDF4LLM` convert HTML pages and multi-page official PDFs into clean Markdown (`#`, `##`, `###`, lists, and tables)[cite: 3].
-* **Heading-Aware Chunking:** Uses `MarkdownHeaderTextSplitter` (`h1`, `h2`, `h3`) followed by `RecursiveCharacterTextSplitter` (`chunk_size=1200`, `chunk_overlap=150`) so every chunk retains its exact section hierarchy (`headings`) and `source_url` for verifiable citations[cite: 3].
-* **Hindi Devanagari Encoding Check (`is_valid_hindi`):** Validates that Hindi documents contain genuine Unicode Devanagari characters (`\u0900–\u097F`) rather than garbled legacy non-Unicode fonts (such as *Kruti Dev* or *Chanakya*) common on older Indian government websites, automatically flagging anomalies for OCR[cite: 3].
-* **Regional & Clinical Context Separation:** Every document is tagged with `region` (`india_national` vs. `global_clinical`) so India-specific schemes and global clinical guidance remain cleanly distinguishable during retrieval and prompt grounding[cite: 3].
-* **India Helpline Safety Guardrail:** Global clinical documents mentioning US emergency numbers (`911` / `988`) are automatically appended with verified Indian emergency and support numbers (`112` Emergency, `1800-599-0019` KIRAN 24/7 Mental Health Helpline)[cite: 2].
-* **Human-in-the-Loop Governance:** Exports `source_review_manifest.csv` with word counts, language tags, and `approval_status` (`pending_review` / `approved`) for domain expert sign-off prior to vector ingestion[cite: 3, 5].
+* **Structure-Preserving Extraction:** Instead of flat text scraping (which destroys eligibility tables and section context), `Crawl4AI` and `PyMuPDF4LLM` convert HTML pages and multi-page official PDFs into clean Markdown (`#`, `##`, `###`, lists, and tables).
+* **Heading-Aware Chunking:** Uses `MarkdownHeaderTextSplitter` (`h1`, `h2`, `h3`) followed by `RecursiveCharacterTextSplitter` (`chunk_size=1200`, `chunk_overlap=150`) so every chunk retains its exact section hierarchy (`headings`) and `source_url` for verifiable citations.
+* **Hindi Devanagari Encoding Check (`is_valid_hindi`):** Validates that Hindi documents contain genuine Unicode Devanagari characters (`\u0900–\u097F`) rather than garbled legacy non-Unicode fonts (such as *Kruti Dev* or *Chanakya*) common on older Indian government websites, automatically flagging anomalies for OCR.
+* **Regional & Clinical Context Separation:** Every document is tagged with `region` (`india_national` vs. `global_clinical`) so India-specific schemes and global clinical guidance remain cleanly distinguishable during retrieval and prompt grounding.
+* **India Helpline Safety Guardrail:** Global clinical documents mentioning US emergency numbers (`911` / `988`) are automatically appended with verified Indian emergency and support numbers (`112` Emergency, `1800-599-0019` KIRAN 24/7 Mental Health Helpline).
+* **Human-in-the-Loop Governance:** Exports `source_review_manifest.csv` with word counts, language tags, and `approval_status` (`pending_review` / `approved`) for domain expert sign-off prior to vector ingestion.
 
 ---
 
@@ -110,7 +110,7 @@ python run_pipeline.py
 
 ## 6. Output Data Schema (`rag_chunks.json`)
 
-Each entry in `data/processed/rag_chunks.json` follows this schema[cite: 3, 5]:
+Each entry in `data/processed/rag_chunks.json` follows this schema:
 
 ```json
 {
@@ -136,6 +136,6 @@ Each entry in `data/processed/rag_chunks.json` follows this schema[cite: 3, 5]:
 
 ## 7. Next Roadmap Steps
 
-1. **Embedding & Vector Indexing:** Embed `rag_chunks.json` into a shared multilingual vector store (`gemini-embedding-2` vs. `Qwen3-Embedding-8B`)[cite: 3].
-2. **Two-Stage Multilingual Retrieval:** Retrieve top-30 candidates via cosine similarity and rerank to top-5 passages using a multilingual cross-encoder (`BAAI/bge-reranker-v2-m3`)[cite: 3].
-3. **Bilingual Evaluation Benchmark:** Evaluate Recall@5 and citation faithfulness across a 30+ question Hindi/English test suite covering medical emergencies, assistive schemes, and daily living[cite: 2, 3].
+1. **Embedding & Vector Indexing:** Embed `rag_chunks.json` into a shared multilingual vector store (`gemini-embedding-2` vs. `Qwen3-Embedding-8B`).
+2. **Two-Stage Multilingual Retrieval:** Retrieve top-30 candidates via cosine similarity and rerank to top-5 passages using a multilingual cross-encoder (`BAAI/bge-reranker-v2-m3`).
+3. **Bilingual Evaluation Benchmark:** Evaluate Recall@5 and citation faithfulness across a 30+ question Hindi/English test suite covering medical emergencies, assistive schemes, and daily living.
